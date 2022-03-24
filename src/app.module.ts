@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ActivitiesModule } from './activities/activities.module';
+import { TasksModule } from './tasks/tasks.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -22,6 +24,8 @@ import { AuthModule } from './auth/auth.module';
     }),
     UsersModule,
     AuthModule,
+    ActivitiesModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
