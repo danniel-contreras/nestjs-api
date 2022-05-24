@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { TasksEntity } from 'src/tasks/tasks.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  RelationId,
+  JoinTable,
+} from 'typeorm';
 @Entity('users')
 export class UsersEntity {
   @PrimaryGeneratedColumn()
@@ -12,4 +20,8 @@ export class UsersEntity {
 
   @Column()
   password: string;
+
+  @OneToMany(() => TasksEntity, (task) => task.id)
+  @JoinTable({name:"taskId"})
+  task: TasksEntity;
 }

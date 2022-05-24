@@ -1,10 +1,12 @@
+import { ActivitiesEntity } from 'src/activities/activities.entity';
 import { UsersEntity } from 'src/users/users.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  RelationId,
   ManyToOne,
+  JoinTable,
+  OneToMany,
 } from 'typeorm';
 @Entity('tasks')
 export class TasksEntity {
@@ -17,9 +19,11 @@ export class TasksEntity {
   @Column()
   created_at: string;
 
-  @ManyToOne(() => UsersEntity)
-  users: UsersEntity[];
+  @ManyToOne(() => UsersEntity, (user) => user.task)
+  @JoinTable({ name: 'userId' })
+  user: UsersEntity;
 
-  @RelationId((tasks: TasksEntity) => tasks.users)
-  usersId: number;
+  @OneToMany(()=>ActivitiesEntity,(activity)=>activity.id)
+  activity:ActivitiesEntity[]
 }
+ 

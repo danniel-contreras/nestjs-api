@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { LoginStatus } from './interfaces/login-status.interface';
-import { LoginUserDto } from "../users/interfaces/user-login.interface";
+import { LoginUserDto } from '../users/interfaces/user-login.interface';
 import { UsersDTO } from '../users/users.dto';
 import { JwtPayload } from './interfaces/payload.interface';
 import { JwtService } from '@nestjs/jwt';
@@ -16,7 +16,6 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto): Promise<LoginStatus> {
     // find user in db
     const user = await this.usersService.findByLogin(loginUserDto);
-    console.log(user)
 
     // generate and sign token
     const token = this._createToken(user);
@@ -35,11 +34,14 @@ export class AuthService {
     return user;
   }
 
-  private _createToken({ email }: UsersDTO): any {
+  private _createToken({ email, id }: UsersDTO): any {
     const expiresIn = process.env.EXPIRESIN;
 
-    const user: JwtPayload = { email };
-    const accessToken = this.jwtService.sign({user},{secret:"FUCK",expiresIn});
+    const user: JwtPayload = { email, id };
+    const accessToken = this.jwtService.sign(
+      { user },
+      { secret: 'FUCK', expiresIn },
+    );
     return {
       accessToken,
     };

@@ -1,11 +1,8 @@
 import { TasksEntity } from 'src/tasks/tasks.entity';
-import { UsersEntity } from 'src/users/users.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  RelationId,
-  OneToMany,
   ManyToOne,
 } from 'typeorm';
 @Entity('activities')
@@ -16,12 +13,9 @@ export class ActivitiesEntity {
   @Column()
   description: string;
 
-  @Column()
+  @Column({default:false})
   status: boolean;
 
-  @ManyToOne(() => TasksEntity)
-  tasks: TasksEntity[];
-  
-  @RelationId((activities: ActivitiesEntity) => activities.tasks)
-  tasksId: number;
+  @ManyToOne(() => TasksEntity,(task)=>task.activity)
+  task: TasksEntity[];
 }

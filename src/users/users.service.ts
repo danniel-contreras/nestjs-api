@@ -25,28 +25,30 @@ export class UsersService {
       .take(take)
       .getManyAndCount();
   }
+  
   async create(data: UsersDTO) {
-    const password =await  hashPassword(data.password);
+    const password = await hashPassword(data.password);
     const user = this.usersRepository.create({ ...data, password });
     await this.usersRepository.save(user);
     return user;
   }
 
   async findByEmail(email: string): Promise<UsersDTO> {
-    return await this.usersRepository.findOne({
+    const data = await this.usersRepository.findOneOrFail({
       where: {
         email,
       },
     });
+    return data;
   }
 
   async read(id: number) {
-    return await this.usersRepository.findOne({ where: { id } });
+    return await this.usersRepository.findOneOrFail({ where: { id } });
   }
 
   async update(id: number, data: Partial<UsersDTO>) {
     await this.usersRepository.update({ id }, data);
-    return await this.usersRepository.findOne({ where: { id } });
+    return await this.read(id);
   }
 
   async destroy(id: number) {
@@ -54,14 +56,14 @@ export class UsersService {
     return { deleted: true };
   }
   async findByLogin({ email, password }: LoginUserDto): Promise<UsersDTO> {
-    const user = await this.usersRepository.findOne({ where: { email } });
+    const user = await this.findByEmail(email)
 
     if (!user) {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
 
     // compare passwords
-    const areEqual = await  checkPassword(password, user.password);
+    const areEqual = await checkPassword(password,user.password);
 
     if (!areEqual) {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
@@ -69,7 +71,7 @@ export class UsersService {
 
     return user;
   }
-  async findByPayload({ email }: any): Promise<UsersDTO> {
-    return await this.findByEmail(email);
+  async findByPayload({ user }: any): Promise<UsersDTO> {
+    return await this.findByEmail(user.email);
   }
 }

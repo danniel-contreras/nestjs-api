@@ -8,7 +8,8 @@ import {
   Param,
   HttpStatus,
   Query,
-  UseGuards
+  UseGuards,
+  Request
 } from '@nestjs/common';
 
 import { UsersService } from './users.service';
@@ -19,10 +20,10 @@ import { AuthGuard } from '@nestjs/passport';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  
   @Get()
-  @UseGuards(AuthGuard("jwt"))
-  async showAllUsers(@Query() query: UserQuery) {
+  @UseGuards(AuthGuard('jwt'))
+  async showAllUsers(@Query() query: UserQuery, @Request() req) {
+    console.log(req.user);
     const page = Number(query.page) || 1;
     const take = Number(query.take) || 5;
     const name = query.search || '';
@@ -101,5 +102,4 @@ export class UsersController {
       message: 'User deleted successfully',
     };
   }
-  
 }
